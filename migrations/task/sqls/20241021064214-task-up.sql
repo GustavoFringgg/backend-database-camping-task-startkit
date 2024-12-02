@@ -57,7 +57,7 @@ LIMIT 3;--限制前3筆
     -- 1. 名稱為 `7 堂組合包方案`，價格為`1,400` 元，堂數為`7`
     -- 2. 名稱為`14 堂組合包方案`，價格為`2,520` 元，堂數為`14`
     -- 3. 名稱為 `21 堂組合包方案`，價格為`4,800` 元，堂數為`21`
-INSERT into "CREDIT_PACKAGE" (NAME,credit_amount,price)
+INSERT INTO "CREDIT_PACKAGE" (NAME,credit_amount,price)
 VALUES	('7 堂組合包方案', 7, 1400), 
 ('14 堂組合包方案', 14, 2520), 
 ('21 堂組合包方案', 21, 4800); 
@@ -65,7 +65,7 @@ VALUES	('7 堂組合包方案', 7, 1400),
     -- 1. `王小明` 購買 `14 堂組合包方案`
     -- 2. `王小明` 購買 `21 堂組合包方案`
     -- 3. `好野人` 購買 `14 堂組合包方案`
-INSERT into "CREDIT_PURCHASE" (user_id,credit_package_id,purchased_credits,price_paid)
+INSERT INTO "CREDIT_PURCHASE" (user_id,credit_package_id,purchased_credits,price_paid)
 VALUES(
 (SELECT id FROM "USER" WHERE NAME ='王小明'),  --這裡如果名字KEY錯會跳"null value in column "user_id"
 (SELECT id FROM "CREDIT_PACKAGE" WHERE NAME = '14 堂組合包方案'),
@@ -131,7 +131,7 @@ VALUES
 
 --3.2-1 所有教練都有 `重訓` 專長
 --土炮插入法
-INSERT into "COACH_LINK_SKILL" (coach_id, skill_id) values 
+INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id) VALUES 
 (
   (SELECT id FROM "COACH" WHERE user_id = (SELECT id FROM "USER" WHERE email = 'lee2000@hexschooltest.io')),
   (SELECT id FROM "SKILL" WHERE NAME = '重訓')
@@ -175,7 +175,7 @@ INSERT into "COACH_LINK_SKILL" (coach_id, skill_id) values
 --------------------
 
 --3.2-2 教練`肌肉棒子` 需要有 `瑜伽` 專長
-INSERT into "COACH_LINK_SKILL" (coach_id, skill_id) values 
+INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id) VALUES 
 (
   (SELECT id FROM "COACH" WHERE user_id = (SELECT id FROM "USER" WHERE email = 'muscle@hexschooltest.io')),
   (SELECT id FROM "SKILL" WHERE NAME = '瑜伽')
