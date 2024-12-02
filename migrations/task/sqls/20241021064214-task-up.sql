@@ -14,7 +14,7 @@
 --     4. 用戶名稱為`好野人`，Email 為`richman@hexschooltest.io`，Role為`USER`
 --     5. 用戶名稱為`Q太郎`，Email 為`starplatinum@hexschooltest.io`，Role為`USER`
 --     6. 用戶名稱為 透明人，Email 為 opacity0@hexschooltest.io，Role 為 USER
-INSERT INTO "USER" (name, email, role)
+INSERT INTO "USER" (NAME, email, role)
 VALUES ('李燕容', 'lee2000@hexschooltest.io', 'USER'),
  	   ('王小明', 'wXlTq@hexschooltest.io', 'USER'),
   	   ('肌肉棒子', 'muscle@hexschooltest.io', 'USER'),
@@ -57,32 +57,32 @@ LIMIT 3;--限制前3筆
     -- 1. 名稱為 `7 堂組合包方案`，價格為`1,400` 元，堂數為`7`
     -- 2. 名稱為`14 堂組合包方案`，價格為`2,520` 元，堂數為`14`
     -- 3. 名稱為 `21 堂組合包方案`，價格為`4,800` 元，堂數為`21`
-insert into "CREDIT_PACKAGE" (name,credit_amount,price)
+INSERT into "CREDIT_PACKAGE" (NAME,credit_amount,price)
 VALUES	('7 堂組合包方案', 7, 1400), 
 ('14 堂組合包方案', 14, 2520), 
 ('21 堂組合包方案', 21, 4800); 
--- 2-2. 新增：在 `CREDIT_PURCHASE` 資料表，新增三筆資料：（請使用 name 欄位做子查詢）
+-- 2-2. 新增：在 `CREDIT_PURCHASE` 資料表，新增三筆資料：（請使用 NAME 欄位做子查詢）
     -- 1. `王小明` 購買 `14 堂組合包方案`
     -- 2. `王小明` 購買 `21 堂組合包方案`
     -- 3. `好野人` 購買 `14 堂組合包方案`
-insert into "CREDIT_PURCHASE" (user_id,credit_package_id,purchased_credits,price_paid)
+INSERT into "CREDIT_PURCHASE" (user_id,credit_package_id,purchased_credits,price_paid)
 VALUES(
-(select id from "USER" where name ='王小明'),  --這裡如果名字KEY錯會跳"null value in column "user_id"
-(select id from "CREDIT_PACKAGE" where name = '14 堂組合包方案'),
-(select credit_amount from "CREDIT_PACKAGE" where name = '14 堂組合包方案'),
-(SELECT price FROM "CREDIT_PACKAGE" where name= '14 堂組合包方案')
+(SELECT id FROM "USER" WHERE NAME ='王小明'),  --這裡如果名字KEY錯會跳"null value in column "user_id"
+(SELECT id FROM "CREDIT_PACKAGE" WHERE NAME = '14 堂組合包方案'),
+(SELECT credit_amount FROM "CREDIT_PACKAGE" WHERE NAME = '14 堂組合包方案'),
+(SELECT price FROM "CREDIT_PACKAGE" WHERE NAME= '14 堂組合包方案')
 ),
 (
-(select id from "USER" where name ='王小明'),
-(select id from "CREDIT_PACKAGE" where name = '21 堂組合包方案'),
-(select credit_amount from "CREDIT_PACKAGE" where name = '21 堂組合包方案'),
-(SELECT price FROM "CREDIT_PACKAGE" where name = '21 堂組合包方案')
+(SELECT id FROM "USER" WHERE NAME ='王小明'),
+(SELECT id FROM "CREDIT_PACKAGE" WHERE NAME = '21 堂組合包方案'),
+(SELECT credit_amount FROM "CREDIT_PACKAGE" WHERE NAME = '21 堂組合包方案'),
+(SELECT price FROM "CREDIT_PACKAGE" WHERE NAME = '21 堂組合包方案')
 ),
 (
-(select id from "USER" where name ='好野人'),
-(select id from "CREDIT_PACKAGE" where name = '14 堂組合包方案'),	
-(select credit_amount from "CREDIT_PACKAGE" where name = '14 堂組合包方案'),
-(SELECT price FROM "CREDIT_PACKAGE" where name = '14 堂組合包方案')
+(SELECT id FROM "USER" WHERE NAME ='好野人'),
+(SELECT id FROM "CREDIT_PACKAGE" WHERE NAME = '14 堂組合包方案'),	
+(SELECT credit_amount FROM "CREDIT_PACKAGE" WHERE NAME = '14 堂組合包方案'),
+(SELECT price FROM "CREDIT_PACKAGE" WHERE NAME = '14 堂組合包方案')
 );
 
 -- ████████  █████   █    ████   
@@ -100,11 +100,11 @@ VALUES(
 --土炮插入法
 --每筆資料都是一個單獨的 SELECT 子查詢，系統會對 USER 表查詢 3 次。
 --在資料大的情況下，效能會很差
-insert  into  "COACH" (user_id,experience_years)
-values
-((select id from "USER" where email ='lee2000@hexschooltest.io'),2),
-((select id from "USER" where email ='muscle@hexschooltest.io'),2),
-((select id from "USER" where email ='starplatinum@hexschooltest.io'),2)
+INSERT  INTO  "COACH" (user_id,experience_years)
+VALUES
+((SELECT id FROM "USER" WHERE email ='lee2000@hexschooltest.io'),2),
+((SELECT id FROM "USER" WHERE email ='muscle@hexschooltest.io'),2),
+((SELECT id FROM "USER" WHERE email ='starplatinum@hexschooltest.io'),2)
 --
 --批量插入法
 --1.查詢：先執行 SELECT，依據 email 條件篩選出對應的 id 資料。
@@ -114,15 +114,15 @@ values
 --效能更好。
 --寫法簡潔且可擴展性更高（可以輕鬆新增或修改條件）。
 --適合多筆資料的插入操作。
-INSERT INTO "COACH" (user_id, experience_yessars)
-SELECT id,
-  2 AS "experience_years"  --不是在篩選 experience_years = 2 的資料，而是直接為插入的記錄設定這個值。
-FROM "USER"
-WHERE "email" IN ( --只有符合條件的 email，它們的 id 才會被拿來進行插入。
-    'lee2000@hexschooltest.io',
-    'muscle@hexschooltest.io',
-    'starplatinum@hexschooltest.io'
-);
+-- INSERT INTO "COACH" (user_id, experience_yessars)
+-- SELECT id,
+--   2 AS "experience_years"  --不是在篩選 experience_years = 2 的資料，而是直接為插入的記錄設定這個值。
+-- FROM "USER"
+-- WHERE "email" IN ( --只有符合條件的 email，它們的 id 才會被拿來進行插入。
+--     'lee2000@hexschooltest.io',
+--     'muscle@hexschooltest.io',
+--     'starplatinum@hexschooltest.io'
+-- );
 
 -- 3-2. 新增：承1，為三名教練新增專長資料至 `COACH_LINK_SKILL` ，資料需求如下：
     -- 1. 所有教練都有 `重訓` 專長
@@ -131,17 +131,17 @@ WHERE "email" IN ( --只有符合條件的 email，它們的 id 才會被拿來�
 
 --3.2-1 所有教練都有 `重訓` 專長
 --土炮插入法
-insert into "COACH_LINK_SKILL" (coach_id, skill_id) values 
+INSERT into "COACH_LINK_SKILL" (coach_id, skill_id) values 
 (
-  (select id from "COACH" where user_id = (select id from "USER" where email = 'lee2000@hexschooltest.io')),
-  (select id from "SKILL" where name = '重訓')
+  (SELECT id FROM "COACH" WHERE user_id = (SELECT id FROM "USER" WHERE email = 'lee2000@hexschooltest.io')),
+  (SELECT id FROM "SKILL" WHERE NAME = '重訓')
 ),(
-  (select id from "COACH" where user_id = (select id from "USER" where email = 'muscle@hexschooltest.io')),
-  (select id from "SKILL" where name = '重訓')
+  (SELECT id FROM "COACH" WHERE user_id = (SELECT id FROM "USER" WHERE email = 'muscle@hexschooltest.io')),
+  (SELECT id FROM "SKILL" WHERE NAME = '重訓')
 ),
 (
-  (select id from "COACH" where user_id = (select id from "USER" where email = 'starplatinum@hexschooltest.io')),
-  (select id from "SKILL" where name = '重訓')
+  (SELECT id FROM "COACH" WHERE user_id = (SELECT id FROM "USER" WHERE email = 'starplatinum@hexschooltest.io')),
+  (SELECT id FROM "SKILL" WHERE NAME = '重訓')
 );
 
 --------------------
@@ -150,35 +150,35 @@ insert into "COACH_LINK_SKILL" (coach_id, skill_id) values
 --   尋找資料來源表：從 "COACH" 開始，並設定其別名為 c。
 --   JOIN 操作：
 --     將 "COACH" 與 "USER" 根據條件 c.user_id = u.id 進行連結。
---     將結果與 "SKILL" 根據條件 s.name = '重訓' 再次連結。
+--     將結果與 "SKILL" 根據條件 s.NAME = '重訓' 再次連結。
 --2. WHERE 子句執行：
 --   在連結後的結果集中，篩選出 "USER" 表中 "role" 等於 'COACH' 的記錄。
 --3. SELECT 子句執行：
 --   從篩選後的結果集中，選取所需的欄位 c.id 和 s.id，並分別命名為 coach_id 和 skill_id。
 --4. INSERT INTO 執行：
 --   將 SELECT 的結果集逐行插入到 "COACH_LINK_SKILL" 表中，對應其欄位 coach_id 和 skill_id。
-INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id)
-SELECT 
-  c.id AS coach_id,
-  s.id AS skill_id
-FROM 
-  "COACH" c --1.將"COACH" 使用別名C
-JOIN 
-  "USER" u ON c.user_id = u.id
-JOIN 
-  "SKILL" s ON s.name = '重訓'
-WHERE 
-  u."role" = 'COACH';
+--INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id)
+--SELECT 
+--  c.id AS coach_id,
+--  s.id AS skill_id
+-- FROM 
+--   "COACH" c --1.將"COACH" 使用別名C
+-- JOIN 
+--   "USER" u ON c.user_id = u.id
+-- JOIN 
+--   "SKILL" s ON s.NAME = '重訓'
+-- WHERE 
+--   u."role" = 'COACH';
 --SQL 的執行順序和程式撰寫的順序不同，它的執行邏輯是：
 --邏輯執行順序：FROM → JOIN → WHERE → SELECT → INSERT
 --書寫順序：INSERT → SELECT → FROM → JOIN → WHERE
 --------------------
 
 --3.2-2 教練`肌肉棒子` 需要有 `瑜伽` 專長
-insert into "COACH_LINK_SKILL" (coach_id, skill_id) values 
+INSERT into "COACH_LINK_SKILL" (coach_id, skill_id) values 
 (
-  (select id from "COACH" where user_id = (select id from "USER" where email = 'muscle@hexschooltest.io')),
-  (select id from "SKILL" where name = '瑜伽')
+  (SELECT id FROM "COACH" WHERE user_id = (SELECT id FROM "USER" WHERE email = 'muscle@hexschooltest.io')),
+  (SELECT id FROM "SKILL" WHERE NAME = '瑜伽')
 )
 
 --3.2-3 教練`Q太郎` 需要有 `有氧運動` 與 `復健訓練` 專長
@@ -191,7 +191,7 @@ FROM
 JOIN 
     "USER" u ON c.user_id = u.id
 JOIN 
-    "SKILL" s ON s.name IN ('有氧運動', '復健訓練')
+    "SKILL" s ON s.NAME IN ('有氧運動', '復健訓練')
 WHERE 
     u.email = 'starplatinum@hexschooltest.io';
 
@@ -263,8 +263,8 @@ WHERE
 
 -- 5-8. [挑戰題] 查詢：請在一次查詢中，計算用戶王小明的剩餘可用堂數，顯示須包含以下欄位： user_id , remaining_credit
     -- 提示：
-    -- select ("CREDIT_PURCHASE".total_credit - "COURSE_BOOKING".used_credit) as remaining_credit, ...
-    -- from ( 用戶王小明的購買堂數 ) as "CREDIT_PURCHASE"
+    -- SELECT ("CREDIT_PURCHASE".total_credit - "COURSE_BOOKING".used_credit) as remaining_credit, ...
+    -- FROM ( 用戶王小明的購買堂數 ) as "CREDIT_PURCHASE"
     -- inner join ( 用戶王小明的已使用堂數) as "COURSE_BOOKING"
     -- on "COURSE_BOOKING".user_id = "CREDIT_PURCHASE".user_id;
 
