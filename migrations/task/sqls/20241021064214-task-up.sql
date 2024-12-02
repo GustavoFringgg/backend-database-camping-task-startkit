@@ -114,15 +114,15 @@ VALUES
 --效能更好。
 --寫法簡潔且可擴展性更高（可以輕鬆新增或修改條件）。
 --適合多筆資料的插入操作。
-INSERT INTO "COACH" (user_id, experience_years)
-SELECT id,
-  2 AS "experience_years"  --不是在篩選 experience_years = 2 的資料，而是直接為插入的記錄設定這個值。
-FROM "USER"
-WHERE "email" IN ( --只有符合條件的 email，它們的 id 才會被拿來進行插入。
-    'lee2000@hexschooltest.io',
-    'muscle@hexschooltest.io',
-    'starplatinum@hexschooltest.io'
-);
+-- INSERT INTO "COACH" (user_id, experience_years)
+-- SELECT id,
+--   2 AS "experience_years"  --不是在篩選 experience_years = 2 的資料，而是直接為插入的記錄設定這個值。
+-- FROM "USER"
+-- WHERE "email" IN ( --只有符合條件的 email，它們的 id 才會被拿來進行插入。
+--     'lee2000@hexschooltest.io',
+--     'muscle@hexschooltest.io',
+--     'starplatinum@hexschooltest.io'
+-- );
 
 -- 3-2. 新增：承1，為三名教練新增專長資料至 `COACH_LINK_SKILL` ，資料需求如下：
     -- 1. 所有教練都有 `重訓` 專長
@@ -157,18 +157,18 @@ INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id) VALUES
 --   從篩選後的結果集中，選取所需的欄位 c.id 和 s.id，並分別命名為 coach_id 和 skill_id。
 --4. INSERT INTO 執行：
 --   將 SELECT 的結果集逐行插入到 "COACH_LINK_SKILL" 表中，對應其欄位 coach_id 和 skill_id。
-INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id)
-SELECT 
- c.id AS coach_id,
- s.id AS skill_id
-FROM 
-  "COACH" c --1.將"COACH" 使用別名C
-JOIN 
-  "USER" u ON c.user_id = u.id
-JOIN 
-  "SKILL" s ON s.NAME = '重訓'
-WHERE 
-  u."role" = 'COACH';
+-- INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id)
+-- SELECT 
+--  c.id AS coach_id,
+--  s.id AS skill_id
+-- FROM 
+--   "COACH" c --1.將"COACH" 使用別名C
+-- JOIN 
+--   "USER" u ON c.user_id = u.id
+-- JOIN 
+--   "SKILL" s ON s.NAME = '重訓'
+-- WHERE 
+--   u."role" = 'COACH';
 --SQL 的執行順序和程式撰寫的順序不同，它的執行邏輯是：
 --邏輯執行順序：FROM → JOIN → WHERE → SELECT → INSERT
 --書寫順序：INSERT → SELECT → FROM → JOIN → WHERE
