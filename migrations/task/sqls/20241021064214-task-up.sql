@@ -114,7 +114,7 @@ VALUES
 --效能更好。
 --寫法簡潔且可擴展性更高（可以輕鬆新增或修改條件）。
 --適合多筆資料的插入操作。
-INSERT INTO "COACH" (user_id, experience_yessars)
+INSERT INTO "COACH" (user_id, experience_years)
 SELECT id,
   2 AS "experience_years"  --不是在篩選 experience_years = 2 的資料，而是直接為插入的記錄設定這個值。
 FROM "USER"
