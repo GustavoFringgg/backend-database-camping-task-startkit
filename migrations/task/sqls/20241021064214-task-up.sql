@@ -104,7 +104,7 @@ INSERT  INTO  "COACH" (user_id,experience_years)
 VALUES
 ((SELECT id FROM "USER" WHERE email ='lee2000@hexschooltest.io'),2),
 ((SELECT id FROM "USER" WHERE email ='muscle@hexschooltest.io'),2),
-((SELECT id FROM "USER" WHERE email ='starplatinum@hexschooltest.io'),2)
+((SELECT id FROM "USER" WHERE email ='starplatinum@hexschooltest.io'),2);
 --
 --批量插入法
 --1.查詢：先執行 SELECT，依據 email 條件篩選出對應的 id 資料。
@@ -179,7 +179,7 @@ INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id) VALUES
 (
   (SELECT id FROM "COACH" WHERE user_id = (SELECT id FROM "USER" WHERE email = 'muscle@hexschooltest.io')),
   (SELECT id FROM "SKILL" WHERE NAME = '瑜伽')
-)
+);
 
 --3.2-3 教練`Q太郎` 需要有 `有氧運動` 與 `復健訓練` 專長
 INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id)
