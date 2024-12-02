@@ -65,7 +65,25 @@ VALUES	('7 堂組合包方案', 7, 1400),
     -- 1. `王小明` 購買 `14 堂組合包方案`
     -- 2. `王小明` 購買 `21 堂組合包方案`
     -- 3. `好野人` 購買 `14 堂組合包方案`
---test
+insert into "CREDIT_PURCHASE" (user_id,credit_package_id,purchased_credits,price_paid)
+VALUES(
+(select id from "USER" where name ='王小明'),  --這裡如果名字KEY錯會跳"null value in column "user_id"
+(select id from "CREDIT_PACKAGE" where name = '14 堂組合包方案'),
+(select credit_amount from "CREDIT_PACKAGE" where name = '14 堂組合包方案'),
+(SELECT price FROM "CREDIT_PACKAGE" where name= '14 堂組合包方案')
+),
+(
+(select id from "USER" where name ='王小明'),
+(select id from "CREDIT_PACKAGE" where name = '21 堂組合包方案'),
+(select credit_amount from "CREDIT_PACKAGE" where name = '21 堂組合包方案'),
+(SELECT price FROM "CREDIT_PACKAGE" where name = '21 堂組合包方案')
+),
+(
+(select id from "USER" where name ='好野人'),
+(select id from "CREDIT_PACKAGE" where name = '14 堂組合包方案'),	
+(select credit_amount from "CREDIT_PACKAGE" where name = '14 堂組合包方案'),
+(SELECT price FROM "CREDIT_PACKAGE" where name = '14 堂組合包方案')
+);
 
 -- ████████  █████   █    ████   
 --   █ █   ██    █  █         ██ 
@@ -79,14 +97,111 @@ VALUES	('7 堂組合包方案', 7, 1400),
     -- 2. 將用戶`肌肉棒子`新增為教練，並且年資設定為2年
     -- 3. 將用戶`Q太郎`新增為教練，並且年資設定為2年
 
+--土炮插入法
+--每筆資料都是一個單獨的 SELECT 子查詢，系統會對 USER 表查詢 3 次。
+--在資料大的情況下，效能會很差
+insert  into  "COACH" (user_id,experience_years)
+values
+((select id from "USER" where email ='lee2000@hexschooltest.io'),2),
+((select id from "USER" where email ='muscle@hexschooltest.io'),2),
+((select id from "USER" where email ='starplatinum@hexschooltest.io'),2)
+--
+--批量插入法
+--1.查詢：先執行 SELECT，依據 email 條件篩選出對應的 id 資料。
+--2.插入：將這些符合條件的記錄插入到 COACH 表中。
+--3.靜態值：批量插入時，experience_years 的值統一為 2。
+--
+--效能更好。
+--寫法簡潔且可擴展性更高（可以輕鬆新增或修改條件）。
+--適合多筆資料的插入操作。
+INSERT INTO "COACH" (user_id, experience_yessars)
+SELECT id,
+  2 AS "experience_years"  --不是在篩選 experience_years = 2 的資料，而是直接為插入的記錄設定這個值。
+FROM "USER"
+WHERE "email" IN ( --只有符合條件的 email，它們的 id 才會被拿來進行插入。
+    'lee2000@hexschooltest.io',
+    'muscle@hexschooltest.io',
+    'starplatinum@hexschooltest.io'
+);
+
 -- 3-2. 新增：承1，為三名教練新增專長資料至 `COACH_LINK_SKILL` ，資料需求如下：
     -- 1. 所有教練都有 `重訓` 專長
     -- 2. 教練`肌肉棒子` 需要有 `瑜伽` 專長
     -- 3. 教練`Q太郎` 需要有 `有氧運動` 與 `復健訓練` 專長
 
+--3.2-1 所有教練都有 `重訓` 專長
+--土炮插入法
+insert into "COACH_LINK_SKILL" (coach_id, skill_id) values 
+(
+  (select id from "COACH" where user_id = (select id from "USER" where email = 'lee2000@hexschooltest.io')),
+  (select id from "SKILL" where name = '重訓')
+),(
+  (select id from "COACH" where user_id = (select id from "USER" where email = 'muscle@hexschooltest.io')),
+  (select id from "SKILL" where name = '重訓')
+),
+(
+  (select id from "COACH" where user_id = (select id from "USER" where email = 'starplatinum@hexschooltest.io')),
+  (select id from "SKILL" where name = '重訓')
+);
+
+--------------------
+--使用多行插入，使用別名，執行順序
+--1. FROM 子句執行：
+--   尋找資料來源表：從 "COACH" 開始，並設定其別名為 c。
+--   JOIN 操作：
+--     將 "COACH" 與 "USER" 根據條件 c.user_id = u.id 進行連結。
+--     將結果與 "SKILL" 根據條件 s.name = '重訓' 再次連結。
+--2. WHERE 子句執行：
+--   在連結後的結果集中，篩選出 "USER" 表中 "role" 等於 'COACH' 的記錄。
+--3. SELECT 子句執行：
+--   從篩選後的結果集中，選取所需的欄位 c.id 和 s.id，並分別命名為 coach_id 和 skill_id。
+--4. INSERT INTO 執行：
+--   將 SELECT 的結果集逐行插入到 "COACH_LINK_SKILL" 表中，對應其欄位 coach_id 和 skill_id。
+INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id)
+SELECT 
+  c.id AS coach_id,
+  s.id AS skill_id
+FROM 
+  "COACH" c --1.將"COACH" 使用別名C
+JOIN 
+  "USER" u ON c.user_id = u.id
+JOIN 
+  "SKILL" s ON s.name = '重訓'
+WHERE 
+  u."role" = 'COACH';
+--SQL 的執行順序和程式撰寫的順序不同，它的執行邏輯是：
+--邏輯執行順序：FROM → JOIN → WHERE → SELECT → INSERT
+--書寫順序：INSERT → SELECT → FROM → JOIN → WHERE
+--------------------
+
+--3.2-2 教練`肌肉棒子` 需要有 `瑜伽` 專長
+insert into "COACH_LINK_SKILL" (coach_id, skill_id) values 
+(
+  (select id from "COACH" where user_id = (select id from "USER" where email = 'muscle@hexschooltest.io')),
+  (select id from "SKILL" where name = '瑜伽')
+)
+
+--3.2-3 教練`Q太郎` 需要有 `有氧運動` 與 `復健訓練` 專長
+INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id)
+SELECT 
+    c.id AS coach_id,
+    s.id AS skill_id
+FROM 
+    "COACH" c
+JOIN 
+    "USER" u ON c.user_id = u.id
+JOIN 
+    "SKILL" s ON s.name IN ('有氧運動', '復健訓練')
+WHERE 
+    u.email = 'starplatinum@hexschooltest.io';
+
+
 -- 3-3 修改：更新教練的經驗年數，資料需求如下：
     -- 1. 教練`肌肉棒子` 的經驗年數為3年
     -- 2. 教練`Q太郎` 的經驗年數為5年
+
+
+
 
 -- 3-4 刪除：新增一個專長 空中瑜伽 至 SKILL 資料表，之後刪除此專長。
 
