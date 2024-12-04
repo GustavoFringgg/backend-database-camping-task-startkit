@@ -404,5 +404,5 @@ AND cp.purchase_at  <= '2024-12-31 00:00:00'; --因12月建立所以時間拉長
 select count(Distinct("COURSE_BOOKING".user_id)) as "預約會員人數"
 from "COURSE_BOOKING"
 where "COURSE_BOOKING".created_at >= '2024-11-01 00:00:00' 
-and "COURSE_BOOKING".created_at <= '2024-11-30 23:59:59' 
+and "COURSE_BOOKING".created_at <= '2024-12-30 23:59:59' 
 and "COURSE_BOOKING".status != '課程已取消';
