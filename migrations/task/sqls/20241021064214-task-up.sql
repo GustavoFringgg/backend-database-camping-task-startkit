@@ -406,4 +406,4 @@ SELECT count(DISTINCT(cb.user_id)) AS "預約會員人數"
 FROM "COURSE_BOOKING" cb 
 WHERE cb.created_at >= '2024-11-01 00:00:00'
 AND cb.created_at <= '2024-12-30 23:59:59'
-AND cb.status != '課程已取消' 
+AND cb.status != '課程已取消';
