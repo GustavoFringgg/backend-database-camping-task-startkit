@@ -303,7 +303,7 @@ VALUES
     (SELECT id FROM "COURSE" WHERE user_id = (SELECT id FROM "USER" WHERE name = '李燕容')), -- 透過id找到'李彥蓉'，再找到course_id
     '2024-11-24 17:10:25', --booking_at
     '即將授課' -- status
-),
+);
 
 -- 5-4. 查詢：取得王小明所有的預約紀錄，包含取消預約的紀錄
 SELECT *
@@ -405,6 +405,6 @@ SELECT
   COUNT(DISTINCT(user_id)) AS "預約會員人數"
 FROM "COURSE_BOOKING"
 WHERE 
-  created_at BETWEEN '2024-11-01 00:00:00' AND '2024-11-30 23:59:59'
+  created_at BETWEEN '2024-11-01 00:00:00' AND '2024-12-30 23:59:59'
   AND
   status != '課程已取消';
