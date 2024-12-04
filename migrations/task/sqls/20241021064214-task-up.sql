@@ -175,11 +175,15 @@ INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id) VALUES
 
 --3.2-2 教練`肌肉棒子` 需要有 `瑜伽` 專長
 
-insert into "COACH_LINK_SKILL" (coach_id, skill_id) values 
-(
-  (select id from "COACH" where user_id = (select id from "USER" where email = 'lee2000@hexschooltest.io')),
-  (select id from "SKILL" where name = '重訓')
-);
+INSERT INTO "COACH_LINK_SKILL" (coach_id,skill_id)
+SELECT 
+    c.id as "coach_id"
+   ,s.id as "skill_id"
+FROM "COACH" as "c"
+	CROSS JOIN "SKILL" as "s"
+	INNER JOIN "USER" as "u" on c.user_id = u.id
+WHERE s.name = '瑜伽'
+		AND u.email = 'muscle@hexschooltest.io';
 
 --3.2-3 教練`Q太郎` 需要有 `有氧運動` 與 `復健訓練` 專長
 INSERT INTO "COACH_LINK_SKILL" (coach_id, skill_id)
