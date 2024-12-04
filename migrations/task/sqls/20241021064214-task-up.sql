@@ -316,7 +316,7 @@ WHERE user_id = (SELECT id FROM "USER"  WHERE email = 'wXlTq@hexschooltest.io');
 UPDATE "COURSE_BOOKING"
 SET join_at = '2024-11-25 14:01:59', -- 加入直播室時間
     status = '上課中' -- 更新status為 "上課中"
-WHERE user_id = (SELECT id FROM "USER" WHERE email = 'wXlTq@hexschooltest.io'); --透過email=王小明尋找id
+WHERE user_id = (SELECT id FROM "USER" WHERE email = 'wXlTq@hexschooltest.io') --透過email=王小明尋找id
   AND course_id = (SELECT id FROM "COURSE" WHERE user_id = (SELECT id FROM "USER" WHERE email ='lee2000@hexschooltest.io')) -- 透過email = 李燕榮
   AND status = '即將授課'; -- 更改即將授課的status
 
